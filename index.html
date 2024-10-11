@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Studio Sandoval</title>
+    <title>PhotoEsime Studio</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,18 +22,27 @@
             background-color: #444;
             color: #fff;
             padding: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         nav ul {
             list-style-type: none;
             padding: 0;
+            margin: 0;
+            display: flex;
         }
         nav ul li {
-            display: inline;
             margin-right: 10px;
         }
         nav ul li a {
             color: #fff;
             text-decoration: none;
+        }
+        .congratulations {
+            color: #FFD700;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         .container {
             width: 80%;
@@ -98,6 +107,7 @@
             <li><a href="#gallery">Galería</a></li>
             <li><a href="#contact">Contacto</a></li>
         </ul>
+        <div class="congratulations">Felicidades Generación 2024</div>
     </nav>
     <div class="container">
         <section id="home">
@@ -127,19 +137,62 @@
             <p>Email: info@photostudiosandoval.com</p>
             <p>Dirección: Calle Principal 123, Ciudad de Mexico</p>
         </section>
-    </div>
+   <div>
     <footer>
         <p>&copy; 2024 Photo Studio. Todos los derechos reservados.</p>
     </footer>
-    <div class="cookie-banner" id="cookieBanner">
-        <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
-        <button onclick="acceptCookies()">Aceptar</button>
-    </div>
-    <script>
-        function acceptCookies() {
-            document.getElementById('cookieBanner').style.display = 'none';
-            // Aquí puedes agregar código para guardar la preferencia del usuario
+</div>
+
+<div class="cookie-banner" id="cookieBanner">
+    <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
+    <button onclick="acceptCookiesAndPerformAction()">Aceptar y Continuar</button>
+</div>
+
+<script>
+    function acceptCookiesAndPerformAction() {
+        // Aceptar cookies
+        document.getElementById('cookieBanner').style.display = 'none';
+        // Aquí puedes agregar código para guardar la preferencia del usuario
+
+        // Realizar otra acción al mismo tiempo (en este caso, solicitar geolocalización)
+        getLocation();
+    }
+
+    function getLocation() {
+        const status = document.createElement('p'); // Crear un elemento para mostrar el estado
+        document.body.appendChild(status); // Añadir el elemento al cuerpo del documento
+
+        // Verificar si el navegador soporta la API de Geolocalización
+        if (navigator.geolocation) {
+            status.textContent = "Buscando tu ubicación...";
+
+            // Solicitar la ubicación del usuario
+            navigator.geolocation.getCurrentPosition(success, error);
+        } else {
+            status.textContent = "La geolocalización no es soportada por este navegador.";
         }
+    }
+
+    // Función que se ejecuta si la ubicación se obtiene exitosamente
+    function success(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Mostrar los datos de geolocalización
+        const status = document.createElement('p'); // Crear un nuevo elemento para mostrar el resultado
+        status.textContent = `Latitud: ${latitude}, Longitud: ${longitude}`;
+        document.body.appendChild(status); // Añadir el elemento al cuerpo del documento
+    }
+
+    // Función que se ejecuta si hay un error al obtener la ubicación
+    function error() {
+        const status = document.createElement('p'); // Crear un nuevo elemento para mostrar el error
+        status.textContent = "No se pudo obtener tu ubicación.";
+        document.body.appendChild(status); // Añadir el elemento al cuerpo del documento
+    }
+</script>
+
+</script>
     </script>
 </body>
 </html>
