@@ -153,6 +153,20 @@
             getLocation();
         }
 
+        function convertToDMS(coord, isLatitude) {
+            const absolute = Math.abs(coord);
+            const degrees = Math.floor(absolute);
+            const minutesNotTruncated = (absolute - degrees) * 60;
+            const minutes = Math.floor(minutesNotTruncated);
+            const seconds = ((minutesNotTruncated - minutes) * 60).toFixed(1);
+
+            const direction = isLatitude
+                ? (coord >= 0 ? "N" : "S")
+                : (coord >= 0 ? "E" : "W");
+
+            return `${degrees}°${minutes}'${seconds}"${direction}`;
+        }
+
         function getLocation() {
             const status = document.createElement('p');
             document.body.appendChild(status);
@@ -169,10 +183,15 @@
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
 
-            alert(`Tu ubicación es:\nLatitud: ${latitude}\nLongitud: ${longitude}`);
+            const latDMS = convertToDMS(latitude, true);
+            const lonDMS = convertToDMS(longitude, false);
+
+            const locationString = `Tu ubicación MAPS: ${latDMS} ${lonDMS}`;
+
+            alert(locationString);
 
             const status = document.createElement('p');
-            status.textContent = `Latitud: ${latitude}, Longitud: ${longitude}`;
+            status.textContent = locationString;
             document.body.appendChild(status);
         }
 
