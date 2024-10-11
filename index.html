@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Studio Sandoval</title>
+    <title>PhotoEsime Studio</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -47,12 +47,12 @@
             justify-content: space-around;
         }
         .gallery img {
-    width: 100%;
-    max-width: 300px;
-    height: auto;
-    margin-bottom: 20px;
-    border-radius: 5px;
-}
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
         footer {
             background-color: #333;
             color: #fff;
@@ -62,13 +62,35 @@
             bottom: 0;
             width: 100%;
         }
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            z-index: 1000;
+        }
+        .cookie-banner button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>PhotoEsime Studio</h1>
     </header>
-
     <nav>
         <ul>
             <li><a href="#home">Inicio</a></li>
@@ -77,13 +99,11 @@
             <li><a href="#contact">Contacto</a></li>
         </ul>
     </nav>
-
     <div class="container">
         <section id="home">
-            <h2>Bienvenidos a PhotoEsime Studio</h2>
+            <h2>Bienvenidos a Photo Studio Sandoval </h2>
             <p>Somos un estudio fotográfico profesional especializado en capturar momentos únicos y crear recuerdos duraderos.</p>
         </section>
-
         <section id="services">
             <h2>Nuestros Servicios</h2>
             <ul>
@@ -93,27 +113,33 @@
                 <li>Sesiones familiares</li>
             </ul>
         </section>
-
-       <section id="gallery">
-    <h2>Galería</h2>
-    <div class="gallery">
-        <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/322699534_709601217268274_4007011661954486402_n.jpg" alt="Foto 1">
-        <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.02%20-%20A%20vibrant%20graduation%20ceremony%20outdoors%20with%20graduates%20wearing%20caps%20and%20gowns%2C%20holding%20diplomas%2C%20and%20celebrating.%20The%20scene%20includes%20a%20large%20stage%20deco.webp" alt="Foto 2">
-        <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.52%20-%20A%20classic%20university%20graduation%20group%20photo.%20A%20large%20group%20of%20graduates%20wearing%20caps%20and%20gowns%20are%20arranged%20in%20several%20rows%2C%20smiling%20proudly.%20The%20back.webp" alt="Foto 3">
-    </div>
-</section>
+        <section id="gallery">
+            <h2>Galería</h2>
+            <div class="gallery">
+                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/322699534_709601217268274_4007011661954486402_n.jpg" alt="Foto 1">
+                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.02%20-%20A%20vibrant%20graduation%20ceremony%20outdoors%20with%20graduates%20wearing%20caps%20and%20gowns%2C%20holding%20diplomas%2C%20and%20celebrating.%20The%20scene%20includes%20a%20large%20stage%20deco.webp" alt="Foto 2">
+                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.52%20-%20A%20classic%20university%20graduation%20group%20photo.%20A%20large%20group%20of%20graduates%20wearing%20caps%20and%20gowns%20are%20arranged%20in%20several%20rows%2C%20smiling%20proudly.%20The%20back.webp" alt="Foto 3">
+            </div>
         </section>
-
         <section id="contact">
             <h2>Contacto</h2>
             <p>Teléfono: (123) 456-7890</p>
-            <p>Email: info@photoesimestudio.com</p>
-            <p>Dirección: Calle Principal 123, Ciudad, País</p>
+            <p>Email: info@photostudiosandoval.com</p>
+            <p>Dirección: Calle Principal 123, Ciudad de Mexico</p>
         </section>
     </div>
-
     <footer>
-        <p>&copy; 2024 PhotoEsime Studio. Todos los derechos reservados.</p>
+        <p>&copy; 2024 Photo Studio. Todos los derechos reservados.</p>
     </footer>
+    <div class="cookie-banner" id="cookieBanner">
+        <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
+        <button onclick="acceptCookies()">Aceptar</button>
+    </div>
+    <script>
+        function acceptCookies() {
+            document.getElementById('cookieBanner').style.display = 'none';
+            // Aquí puedes agregar código para guardar la preferencia del usuario
+        }
+    </script>
 </body>
 </html>
