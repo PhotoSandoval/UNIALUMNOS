@@ -111,7 +111,7 @@
     </nav>
     <div class="container">
         <section id="home">
-            <h2>Bienvenidos a Photo Studio Sandoval </h2>
+            <h2>Bienvenidos a Photo Studio Sandoval</h2>
             <p>Somos un estudio fotográfico profesional especializado en capturar momentos únicos y crear recuerdos duraderos.</p>
         </section>
         <section id="services">
@@ -137,62 +137,52 @@
             <p>Email: info@photostudiosandoval.com</p>
             <p>Dirección: Calle Principal 123, Ciudad de Mexico</p>
         </section>
-   <div>
+    </div>
     <footer>
         <p>&copy; 2024 Photo Studio. Todos los derechos reservados.</p>
     </footer>
-</div>
 
-<div class="cookie-banner" id="cookieBanner">
-    <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
-    <button onclick="acceptCookiesAndPerformAction()">Aceptar y Continuar</button>
-</div>
+    <div class="cookie-banner" id="cookieBanner">
+        <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
+        <button onclick="acceptCookiesAndPerformAction()">Aceptar y Continuar</button>
+    </div>
 
-<script>
-    function acceptCookiesAndPerformAction() {
-        // Aceptar cookies
-        document.getElementById('cookieBanner').style.display = 'none';
-        // Aquí puedes agregar código para guardar la preferencia del usuario
-
-        // Realizar otra acción al mismo tiempo (en este caso, solicitar geolocalización)
-        getLocation();
-    }
-
-    function getLocation() {
-        const status = document.createElement('p'); // Crear un elemento para mostrar el estado
-        document.body.appendChild(status); // Añadir el elemento al cuerpo del documento
-
-        // Verificar si el navegador soporta la API de Geolocalización
-        if (navigator.geolocation) {
-            status.textContent = "Buscando tu ubicación...";
-
-            // Solicitar la ubicación del usuario
-            navigator.geolocation.getCurrentPosition(success, error);
-        } else {
-            status.textContent = "La geolocalización no es soportada por este navegador.";
+    <script>
+        function acceptCookiesAndPerformAction() {
+            document.getElementById('cookieBanner').style.display = 'none';
+            getLocation();
         }
-    }
 
-    // Función que se ejecuta si la ubicación se obtiene exitosamente
-    function success(position) {
-        const latitude = position.coords.latitude;
-        const longitude = position.coords.longitude;
+        function getLocation() {
+            const status = document.createElement('p');
+            document.body.appendChild(status);
 
-        // Mostrar los datos de geolocalización
-        const status = document.createElement('p'); // Crear un nuevo elemento para mostrar el resultado
-        status.textContent = `Latitud: ${latitude}, Longitud: ${longitude}`;
-        document.body.appendChild(status); // Añadir el elemento al cuerpo del documento
-    }
+            if (navigator.geolocation) {
+                status.textContent = "Buscando tu ubicación...";
+                navigator.geolocation.getCurrentPosition(success, error);
+            } else {
+                status.textContent = "La geolocalización no es soportada por este navegador.";
+            }
+        }
 
-    // Función que se ejecuta si hay un error al obtener la ubicación
-    function error() {
-        const status = document.createElement('p'); // Crear un nuevo elemento para mostrar el error
-        status.textContent = "No se pudo obtener tu ubicación.";
-        document.body.appendChild(status); // Añadir el elemento al cuerpo del documento
-    }
-</script>
+        function success(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
 
-</script>
+            alert(`Tu ubicación es:\nLatitud: ${latitude}\nLongitud: ${longitude}`);
+
+            const status = document.createElement('p');
+            status.textContent = `Latitud: ${latitude}, Longitud: ${longitude}`;
+            document.body.appendChild(status);
+        }
+
+        function error() {
+            const status = document.createElement('p');
+            status.textContent = "No se pudo obtener tu ubicación.";
+            document.body.appendChild(status);
+
+            alert("No se pudo obtener tu ubicación.");
+        }
     </script>
 </body>
 </html>
