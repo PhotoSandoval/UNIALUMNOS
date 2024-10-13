@@ -81,7 +81,7 @@
             color: white;
             text-align: center;
             padding: 1rem;
-            z-index: 1000;
+            z-index: 2000;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -98,6 +98,34 @@
             font-size: 16px;
             margin: 4px 2px;
             cursor: pointer;
+        }
+        .promo-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.02%20-%20A%20vibrant%20graduation%20ceremony%20outdoors%20with%20graduates%20wearing%20caps%20and%20gowns%2C%20holding%20diplomas%2C%20and%20celebrating.%20The%20scene%20includes%20a%20large%20stage%20deco.webp');
+            background-size: cover;
+            background-position: center;
+            z-index: 1000;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        .close-promo {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            color: black;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
         }
     </style>
 </head>
@@ -147,6 +175,10 @@
         <p>&copy; 2024 Photo Studio. Todos los derechos reservados.</p>
     </footer>
 
+    <div class="promo-image" id="promoImage">
+        <button class="close-promo" onclick="closePromo()">Cerrar Promoción</button>
+    </div>
+
     <div class="cookie-banner" id="cookieBanner">
         <h2>Aviso de Cookies</h2>
         <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
@@ -157,6 +189,10 @@
         function acceptCookiesAndPerformAction() {
             document.getElementById('cookieBanner').style.display = 'none';
             getLocation();
+        }
+
+        function closePromo() {
+            document.getElementById('promoImage').style.display = 'none';
         }
 
         function convertToDMS(coord, isLatitude) {
