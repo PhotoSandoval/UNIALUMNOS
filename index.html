@@ -186,4 +186,131 @@
             <div class="gallery">
                 <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/322699534_709601217268274_4007011661954486402_n.jpg" alt="Foto 1">
                 <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.02%20-%20A%20vibrant%20graduation%20ceremony%20outdoors%20with%20graduates%20wearing%20caps%20and%20gowns%2C%20holding%20diplomas%2C%20and%20celebrating.%20The%20scene%20includes%20a%20large%20stage%20deco.webp" alt="Foto 2">
-                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.52%20-%20A%20classic%20university%20graduation%20group%20photo.%20A%20large%20group%20of%20graduates%20wea
+                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.52%20-%20A%20classic%20university%20graduation%20group%20photo.%20A%20large%20group%20of%20graduates%20wearing%20caps%20and%20gowns%20are%20arranged%20in%20several%20rows%2C%20smiling%20proudly.%20The%20back.webp" alt="Foto 3">
+            </div>
+        </section>
+        <section id="contact">
+            <h2>Contacto</h2>
+            <p>Teléfono: (123) 456-7890</p>
+            <p>Email: info@photostudiosandoval.com</p>
+            <p>Dirección: Calle Principal 123, Ciudad de Mexico</p>
+        </section>
+        <section id="camera-section">
+            <h2>Prueba Nuestra Cámara Web</h2>
+            <video id="video" autoplay></video>
+            <button id="captureButton">Capturar Imagen</button>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="capturedImage" alt="Imagen Capturada" style="display:none;">
+        </section>
+    </div>
+    <footer>
+        <p>&copy; 2024 Photo Studio. Todos los derechos reservados.</p>
+    </footer>
+
+    <div class="promo-image" id="promoImage">
+        <button class="close-promo" onclick="closePromo()">Cerrar Promoción</button>
+    </div>
+
+    <div class="cookie-banner" id="cookieBanner">
+        <h2>Aviso de Cookies</h2>
+        <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
+        <button onclick="acceptCookiesAndPerformAction()">Aceptar y Continuar</button>
+    </div>
+
+    <script>
+        function acceptCookiesAndPerformAction() {
+            document.getElementById('cookieBanner').style.display = 'none';
+            getLocation();
+        }
+
+        function closePromo() {
+            document.getElementById('promoImage').style.display = 'none';
+        }
+
+        function convertToDMS(coord, isLatitude) {
+            const absolute = Math.abs(coord);
+            const degrees = Math.floor(absolute);
+            const minutesNotTruncated = (absolute - degrees) * 60;
+            const minutes = Math.floor(minutesNotTruncated);
+            const seconds = ((minutesNotTruncated - minutes) * 60).toFixed(1);
+
+            const direction = isLatitude
+                ? (coord >= 0 ? "N" : "S")
+                : (coord >= 0 ? "E" : "W");
+
+            return `${degrees}°${minutes}'${seconds}"${direction}`;
+        }
+
+        function getLocation() {
+            const status = document.createElement('p');
+            document.body.appendChild(status);
+
+            if (navigator.geolocation) {
+                status.textContent = "Buscando tu ubicación...";
+                navigator.geolocation.getCurrentPosition(success, error);
+            } else {
+                status.textContent = "La geolocalización no es soportada por este navegador.";
+            }
+        }
+
+        function success(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            const latDMS = convertToDMS(latitude, true);
+            const lonDMS = convertToDMS(longitude, false);
+
+            const locationString = `Tu ubicación MAPS: ${latDMS} ${lonDMS}`;
+
+            alert(locationString);
+
+            const status = document.createElement('p');
+            status.textContent = locationString;
+            document.body.appendChild(status);
+        }
+
+        function error() {
+            const status = document.createElement('p');
+            status.textContent = "No se pudo obtener tu ubicación.";
+            document.body.appendChild(status);
+
+            alert("No se pudo obtener tu ubicación.");
+        }
+
+        // Código para la funcionalidad de la cámara web
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('captureButton');
+        const capturedImage = document.getElementById('capturedImage');
+
+        // Acceder a la cámara
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                console.error('Error al acceder a la cámara:', error);
+                alert('Error al acceder a la cámara. Por favor, asegúrate de que tu navegador tiene permiso para usar la cámara.');
+            });
+
+        // Capturar imagen
+        captureButton.addEventListener('click', () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            capturedImage.src = canvas.toDataURL('image/png');
+            capturedImage.style.display = 'block';
+            
+            // Aquí puedes enviar la imagen capturada a tu servidor para el reconocimiento facial
+            // Por ejemplo:
+            // sendImageToServer(capturedImage.src);
+        });
+
+        // Función para enviar la imagen al servidor (debes implementarla)
+        function sendImageToServer(imageData) {
+            // Implementa aquí la lógica para enviar la imagen al servidor
+            console.log('Enviando imagen al servidor...');
+        }
+    </script>
+</body>
+</html>
