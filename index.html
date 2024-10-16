@@ -3,247 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Photo Studio Sandoval</title>
+    <title>Acceso a la Cámara</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-        }
-        nav {
-            background-color: #444;
-            color: #fff;
-            padding: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-        }
-        nav ul li {
-            margin-right: 10px;
-        }
-        nav ul li a {
-            color: #fff;
-            text-decoration: none;
-        }
-        .congratulations {
-            color: #FFD700;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-        }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding: 20px;
-        }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-        .gallery img {
-            width: 100%;
-            max-width: 300px;
-            height: auto;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        footer {
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-        .cookie-banner {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.9);
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            z-index: 2000;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-        }
-        .cookie-banner button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-        }
-        .promo-image {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-image: url('https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/2841d4673d836663c41777e11ee6ad7b5c55fd05/Captura-de-Pantalla-2021-06-09-a-las-16.38.04.png');
-            background-size: cover;
-            background-position: center;
-            z-index: 1000;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-start;
+            margin: 0;
             padding: 20px;
         }
-        .close-promo {
-            background-color: rgba(255, 255, 255, 0.7);
-            border: none;
-            color: black;
+        button {
+            font-size: 1em;
             padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
+            margin: 20px 0;
+        }
+        #videoElement {
+            width: 100%;
+            max-width: 640px;
+            background-color: #ddd;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>PhotoEsime Studio</h1>
-    </header>
-    <nav>
-        <ul>
-            <li><a href="#home">Inicio</a></li>
-            <li><a href="#services">Servicios</a></li>
-            <li><a href="#gallery">Galería</a></li>
-            <li><a href="#contact">Contacto</a></li>
-        </ul>
-        <div class="congratulations">Felicidades Generación 2024</div>
-    </nav>
-    <div class="container">
-        <section id="home">
-            <h2>Bienvenidos a Photo Studio Sandoval</h2>
-            <p>Somos un estudio fotográfico profesional especializado en capturar momentos únicos y crear recuerdos duraderos.</p>
-        </section>
-        <section id="services">
-            <h2>Nuestros Servicios</h2>
-            <ul>
-                <li>Fotografía de retratos</li>
-                <li>Fotografía de bodas</li>
-                <li>Fotografía de eventos</li>
-                <li>Sesiones familiares</li>
-            </ul>
-        </section>
-        <section id="gallery">
-            <h2>Galería</h2>
-            <div class="gallery">
-                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/322699534_709601217268274_4007011661954486402_n.jpg" alt="Foto 1">
-                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.02%20-%20A%20vibrant%20graduation%20ceremony%20outdoors%20with%20graduates%20wearing%20caps%20and%20gowns%2C%20holding%20diplomas%2C%20and%20celebrating.%20The%20scene%20includes%20a%20large%20stage%20deco.webp" alt="Foto 2">
-                <img src="https://raw.githubusercontent.com/PhotoSandoval/UNIALUMNOS/main/DALL%C2%B7E%202024-10-10%2022.21.52%20-%20A%20classic%20university%20graduation%20group%20photo.%20A%20large%20group%20of%20graduates%20wearing%20caps%20and%20gowns%20are%20arranged%20in%20several%20rows%2C%20smiling%20proudly.%20The%20back.webp" alt="Foto 3">
-            </div>
-        </section>
-        <section id="contact">
-            <h2>Contacto</h2>
-            <p>Teléfono: (123) 456-7890</p>
-            <p>Email: info@photostudiosandoval.com</p>
-            <p>Dirección: Calle Principal 123, Ciudad de Mexico</p>
-        </section>
-    </div>
-    <footer>
-        <p>&copy; 2024 Photo Studio. Todos los derechos reservados.</p>
-    </footer>
-
-    <div class="promo-image" id="promoImage">
-        <button class="close-promo" onclick="closePromo()">Cerrar Promoción</button>
-    </div>
-
-    <div class="cookie-banner" id="cookieBanner">
-        <h2>Aviso de Cookies</h2>
-        <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
-        <button onclick="acceptCookiesAndPerformAction()">Aceptar y Continuar</button>
-    </div>
+    <h1>Acceso a la Cámara</h1>
+    <button id="startButton">Iniciar Cámara</button>
+    <video id="videoElement" autoplay playsinline></video>
 
     <script>
-        function acceptCookiesAndPerformAction() {
-            document.getElementById('cookieBanner').style.display = 'none';
-            getLocation();
-        }
+        const startButton = document.getElementById('startButton');
+        const videoElement = document.getElementById('videoElement');
 
-        function closePromo() {
-            document.getElementById('promoImage').style.display = 'none';
-        }
-
-        function convertToDMS(coord, isLatitude) {
-            const absolute = Math.abs(coord);
-            const degrees = Math.floor(absolute);
-            const minutesNotTruncated = (absolute - degrees) * 60;
-            const minutes = Math.floor(minutesNotTruncated);
-            const seconds = ((minutesNotTruncated - minutes) * 60).toFixed(1);
-
-            const direction = isLatitude
-                ? (coord >= 0 ? "N" : "S")
-                : (coord >= 0 ? "E" : "W");
-
-            return `${degrees}°${minutes}'${seconds}"${direction}`;
-        }
-
-        function getLocation() {
-            const status = document.createElement('p');
-            document.body.appendChild(status);
-
-            if (navigator.geolocation) {
-                status.textContent = "Buscando tu ubicación...";
-                navigator.geolocation.getCurrentPosition(success, error);
-            } else {
-                status.textContent = "La geolocalización no es soportada por este navegador.";
+        startButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error('Error al acceder a la cámara:', error);
+                alert('No se pudo acceder a la cámara. Asegúrate de dar permiso y de que tu dispositivo tenga una cámara frontal.');
             }
-        }
-
-        function success(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            const latDMS = convertToDMS(latitude, true);
-            const lonDMS = convertToDMS(longitude, false);
-
-            const locationString = `Tu ubicación MAPS: ${latDMS} ${lonDMS}`;
-
-            alert(locationString);
-
-            const status = document.createElement('p');
-            status.textContent = locationString;
-            document.body.appendChild(status);
-        }
-
-        function error() {
-            const status = document.createElement('p');
-            status.textContent = "No se pudo obtener tu ubicación.";
-            document.body.appendChild(status);
-
-            alert("No se pudo obtener tu ubicación.");
-        }
+        });
     </script>
 </body>
 </html>
