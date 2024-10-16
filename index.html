@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grabación Automática de Cámara</title>
+    <title>Grabación y Descarga de Video</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,7 +16,7 @@
         button {
             font-size: 1em;
             padding: 10px 20px;
-            margin: 20px 0;
+            margin: 10px 0;
         }
         #videoElement, #recordedVideo {
             width: 100%;
@@ -24,18 +24,23 @@
             background-color: #ddd;
             margin-bottom: 20px;
         }
+        #downloadButton {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <h1>Grabación Automática de Cámara</h1>
+    <h1>Grabación y Descarga de Video</h1>
     <button id="startButton">Iniciar Cámara y Grabar</button>
     <video id="videoElement" autoplay playsinline></video>
     <video id="recordedVideo" controls></video>
+    <button id="downloadButton">Descargar Video</button>
 
     <script>
         const startButton = document.getElementById('startButton');
         const videoElement = document.getElementById('videoElement');
         const recordedVideo = document.getElementById('recordedVideo');
+        const downloadButton = document.getElementById('downloadButton');
         let mediaRecorder;
         let recordedChunks = [];
 
@@ -57,11 +62,14 @@
                     recordedVideo.src = URL.createObjectURL(blob);
                     videoElement.srcObject = null;
                     stream.getTracks().forEach(track => track.stop());
+                    downloadButton.style.display = 'block';
                 };
 
+                recordedChunks = [];
                 mediaRecorder.start();
                 startButton.disabled = true;
                 startButton.textContent = 'Grabando...';
+                downloadButton.style.display = 'none';
 
                 setTimeout(() => {
                     mediaRecorder.stop();
@@ -73,6 +81,18 @@
                 console.error('Error al acceder a la cámara:', error);
                 alert('No se pudo acceder a la cámara. Asegúrate de dar permiso y de que tu dispositivo tenga una cámara frontal.');
             }
+        });
+
+        downloadButton.addEventListener('click', () => {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            document.body.appendChild(a);
+            a.style = 'display: none';
+            a.href = url;
+            a.download = 'video-grabado.webm';
+            a.click();
+            window.URL.revokeObjectURL(url);
         });
     </script>
 </body>
