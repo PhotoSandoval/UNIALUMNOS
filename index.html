@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grabación y Envío de Video</title>
+    <title>Captura y Envío de Fotos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,96 +18,118 @@
             padding: 10px 20px;
             margin: 10px 0;
         }
-        #videoElement, #recordedVideo {
+        #videoElement {
             width: 100%;
             max-width: 640px;
             background-color: #ddd;
             margin-bottom: 20px;
         }
-        #sendButton, #downloadButton {
+        #photoContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 640px;
+        }
+        #photoContainer img {
+            width: 120px;
+            height: 90px;
+            margin: 5px;
+            object-fit: cover;
+        }
+        #sendButton {
             display: none;
         }
     </style>
 </head>
 <body>
-    <h1>Grabación y Envío de Video</h1>
-    <button id="startButton">Iniciar Cámara y Grabar</button>
+    <h1>Captura y Envío de Fotos</h1>
+    <button id="startButton">Iniciar Cámara y Capturar</button>
     <video id="videoElement" autoplay playsinline></video>
-    <video id="recordedVideo" controls></video>
-    <button id="sendButton">Enviar Video</button>
-    <button id="downloadButton">Descargar Video</button>
+    <div id="photoContainer"></div>
+    <button id="sendButton">Enviar Fotos</button>
 
     <form id="sendForm" action="https://formsubmit.co/ingjairmolina@gmail.com" method="POST" enctype="multipart/form-data" style="display:none;">
-        <input type="file" name="attachment" id="videoFile">
+        <input type="file" name="attachment" id="photoFiles" multiple>
     </form>
 
     <script>
         const startButton = document.getElementById('startButton');
         const videoElement = document.getElementById('videoElement');
-        const recordedVideo = document.getElementById('recordedVideo');
+        const photoContainer = document.getElementById('photoContainer');
         const sendButton = document.getElementById('sendButton');
-        const downloadButton = document.getElementById('downloadButton');
         const sendForm = document.getElementById('sendForm');
-        const videoFile = document.getElementById('videoFile');
-        let mediaRecorder;
-        let recordedChunks = [];
+        const photoFiles = document.getElementById('photoFiles');
+        let stream;
+        let capturedPhotos = [];
 
         startButton.addEventListener('click', async () => {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+                stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
                 videoElement.srcObject = stream;
                 
-                mediaRecorder = new MediaRecorder(stream);
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
-                };
-                mediaRecorder.onstop = () => {
-                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    recordedVideo.src = URL.createObjectURL(blob);
-                    videoElement.srcObject = null;
-                    stream.getTracks().forEach(track => track.stop());
-                    sendButton.style.display = 'block';
-                    downloadButton.style.display = 'block';
-                };
-                recordedChunks = [];
-                mediaRecorder.start();
                 startButton.disabled = true;
-                startButton.textContent = 'Grabando...';
+                startButton.textContent = 'Capturando...';
                 sendButton.style.display = 'none';
-                downloadButton.style.display = 'none';
-                setTimeout(() => {
-                    mediaRecorder.stop();
-                    startButton.disabled = false;
-                    startButton.textContent = 'Iniciar Cámara y Grabar';
-                }, 5000);
+                photoContainer.innerHTML = '';
+                capturedPhotos = [];
+
+                let captureCount = 0;
+                const captureInterval = setInterval(() => {
+                    capturePhoto();
+                    captureCount++;
+                    if (captureCount >= 5) {
+                        clearInterval(captureInterval);
+                        stopCapture();
+                    }
+                }, 1000);
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
                 alert('No se pudo acceder a la cámara. Asegúrate de dar permiso y de que tu dispositivo tenga una cámara frontal.');
             }
         });
 
+        function capturePhoto() {
+            const canvas = document.createElement('canvas');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            canvas.getContext('2d').drawImage(videoElement, 0, 0);
+            const img = document.createElement('img');
+            img.src = canvas.toDataURL('image/jpeg');
+            photoContainer.appendChild(img);
+            capturedPhotos.push(canvas.toDataURL('image/jpeg'));
+        }
+
+        function stopCapture() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                videoElement.srcObject = null;
+            }
+            startButton.disabled = false;
+            startButton.textContent = 'Iniciar Cámara y Capturar';
+            sendButton.style.display = 'block';
+        }
+
         sendButton.addEventListener('click', () => {
-            const blob = new Blob(recordedChunks, { type: 'video/webm' });
-            const file = new File([blob], 'video.webm', { type: 'video/webm' });
             const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            videoFile.files = dataTransfer.files;
+            capturedPhotos.forEach((dataUrl, index) => {
+                const blob = dataURItoBlob(dataUrl);
+                const file = new File([blob], `foto_${index + 1}.jpg`, { type: 'image/jpeg' });
+                dataTransfer.items.add(file);
+            });
+            photoFiles.files = dataTransfer.files;
             sendForm.submit();
         });
 
-        downloadButton.addEventListener('click', () => {
-            const blob = new Blob(recordedChunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            document.body.appendChild(a);
-            a.style = 'display: none';
-            a.href = url;
-            a.download = 'video-grabado.webm';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        });
+        function dataURItoBlob(dataURI) {
+            const byteString = atob(dataURI.split(',')[1]);
+            const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ab], { type: mimeString });
+        }
     </script>
 </body>
 </html>
