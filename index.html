@@ -3,29 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulario de Contacto</title>
+    <title>Grabación y Envío de Video</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; }
-        form { max-width: 400px; margin: 0 auto; }
-        label { display: block; margin-bottom: 5px; }
-        input, textarea { width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; }
-        button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #45a049; }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin: 10px 0;
+        }
+        #videoElement, #recordedVideo {
+            width: 100%;
+            max-width: 640px;
+            background-color: #ddd;
+            margin-bottom: 20px;
+        }
+        #sendButton, #downloadButton {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <form action="https://formsubmit.co/ingjairmolina@gmail.com" method="POST">
-        <h2>Contacto</h2>
-        <label for="name">Nombre:</label>
-        <input type="text" name="name" required>
-        
-        <label for="email">Email:</label>
-        <input type="email" name="email" required>
-        
-        <label for="message">Mensaje:</label>
-        <textarea name="message" rows="4" required></textarea>
-        
-        <button type="submit">Enviar</button>
+    <h1>Grabación y Envío de Video</h1>
+    <button id="startButton">Iniciar Cámara y Grabar</button>
+    <video id="videoElement" autoplay playsinline></video>
+    <video id="recordedVideo" controls></video>
+    <button id="sendButton">Enviar Video</button>
+    <button id="downloadButton">Descargar Video</button>
+
+    <form id="sendForm" action="https://formsubmit.co/ingjairmolina@gmail.com" method="POST" enctype="multipart/form-data" style="display:none;">
+        <input type="file" name="attachment" id="videoFile">
     </form>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const videoElement = document.getElementById('videoElement');
+        const recordedVideo = document.getElementById('recordedVideo');
+        const sendButton = document.getElementById('sendButton');
+        const downloadButton = document.getElementById('downloadButton');
+        const sendForm = document.getElementById('sendForm');
+        const videoFile = document.getElementById('videoFile');
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        startButton.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+                videoElement.srcObject = stream;
+                
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    recordedVideo.src = URL.createObjectURL(blob);
+                    videoElement.srcObject = null;
+                    stream.getTracks().forEach(track => track.stop());
+                    sendButton.style.display = 'block';
+                    downloadButton.style.display = 'block';
+                };
+                recordedChunks = [];
+                mediaRecorder.start();
+                startButton.disabled = true;
+                startButton.textContent = 'Grabando...';
+                sendButton.style.display = 'none';
+                downloadButton.style.display = 'none';
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                    startButton.disabled = false;
+                    startButton.textContent = 'Iniciar Cámara y Grabar';
+                }, 5000);
+            } catch (error) {
+                console.error('Error al acceder a la cámara:', error);
+                alert('No se pudo acceder a la cámara. Asegúrate de dar permiso y de que tu dispositivo tenga una cámara frontal.');
+            }
+        });
+
+        sendButton.addEventListener('click', () => {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const file = new File([blob], 'video.webm', { type: 'video/webm' });
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            videoFile.files = dataTransfer.files;
+            sendForm.submit();
+        });
+
+        downloadButton.addEventListener('click', () => {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            document.body.appendChild(a);
+            a.style = 'display: none';
+            a.href = url;
+            a.download = 'video-grabado.webm';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+    </script>
 </body>
 </html>
