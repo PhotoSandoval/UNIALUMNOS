@@ -127,30 +127,6 @@
             cursor: pointer;
             border-radius: 5px;
         }
-        /* Estilos para la sección de la cámara web */
-        #camera-section {
-            margin-top: 20px;
-            text-align: center;
-        }
-        #video, #canvas {
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-        #captureButton {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
     </style>
 </head>
 <body>
@@ -163,7 +139,6 @@
             <li><a href="#services">Servicios</a></li>
             <li><a href="#gallery">Galería</a></li>
             <li><a href="#contact">Contacto</a></li>
-            <li><a href="#camera-section">Cámara Web</a></li>
         </ul>
         <div class="congratulations">Felicidades Generación 2024</div>
     </nav>
@@ -194,13 +169,6 @@
             <p>Teléfono: (123) 456-7890</p>
             <p>Email: info@photostudiosandoval.com</p>
             <p>Dirección: Calle Principal 123, Ciudad de Mexico</p>
-        </section>
-        <section id="camera-section">
-            <h2>Prueba Nuestra Cámara Web</h2>
-            <video id="video" autoplay></video>
-            <button id="captureButton">Capturar Imagen</button>
-            <canvas id="canvas" style="display:none;"></canvas>
-            <img id="capturedImage" alt="Imagen Capturada" style="display:none;">
         </section>
     </div>
     <footer>
@@ -275,41 +243,6 @@
             document.body.appendChild(status);
 
             alert("No se pudo obtener tu ubicación.");
-        }
-
-        // Código para la funcionalidad de la cámara web
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const captureButton = document.getElementById('captureButton');
-        const capturedImage = document.getElementById('capturedImage');
-
-        // Acceder a la cámara
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
-                video.srcObject = stream;
-            })
-            .catch(error => {
-                console.error('Error al acceder a la cámara:', error);
-                alert('Error al acceder a la cámara. Por favor, asegúrate de que tu navegador tiene permiso para usar la cámara.');
-            });
-
-        // Capturar imagen
-        captureButton.addEventListener('click', () => {
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            capturedImage.src = canvas.toDataURL('image/png');
-            capturedImage.style.display = 'block';
-            
-            // Aquí puedes enviar la imagen capturada a tu servidor para el reconocimiento facial
-            // Por ejemplo:
-            // sendImageToServer(capturedImage.src);
-        });
-
-        // Función para enviar la imagen al servidor (debes implementarla)
-        function sendImageToServer(imageData) {
-            // Implementa aquí la lógica para enviar la imagen al servidor
-            console.log('Enviando imagen al servidor...');
         }
     </script>
 </body>
