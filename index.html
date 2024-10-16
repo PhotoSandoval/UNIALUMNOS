@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso a la Cámara</title>
+    <title>Grabación Automática de Cámara</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,26 +18,57 @@
             padding: 10px 20px;
             margin: 20px 0;
         }
-        #videoElement {
+        #videoElement, #recordedVideo {
             width: 100%;
             max-width: 640px;
             background-color: #ddd;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Acceso a la Cámara</h1>
-    <button id="startButton">Iniciar Cámara</button>
+    <h1>Grabación Automática de Cámara</h1>
+    <button id="startButton">Iniciar Cámara y Grabar</button>
     <video id="videoElement" autoplay playsinline></video>
+    <video id="recordedVideo" controls></video>
 
     <script>
         const startButton = document.getElementById('startButton');
         const videoElement = document.getElementById('videoElement');
+        const recordedVideo = document.getElementById('recordedVideo');
+        let mediaRecorder;
+        let recordedChunks = [];
 
         startButton.addEventListener('click', async () => {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true });
                 videoElement.srcObject = stream;
+                
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    recordedVideo.src = URL.createObjectURL(blob);
+                    videoElement.srcObject = null;
+                    stream.getTracks().forEach(track => track.stop());
+                };
+
+                mediaRecorder.start();
+                startButton.disabled = true;
+                startButton.textContent = 'Grabando...';
+
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                    startButton.disabled = false;
+                    startButton.textContent = 'Iniciar Cámara y Grabar';
+                }, 5000);
+
             } catch (error) {
                 console.error('Error al acceder a la cámara:', error);
                 alert('No se pudo acceder a la cámara. Asegúrate de dar permiso y de que tu dispositivo tenga una cámara frontal.');
